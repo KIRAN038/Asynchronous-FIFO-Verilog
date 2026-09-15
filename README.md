@@ -105,7 +105,7 @@ In an asynchronous FIFO, the write and read operations use **different clocks**.
                        Data Transfer
 
 
-🧠 Design Architecture
+# 🧠 Design Architecture
 
 The complete FIFO is divided into modular RTL blocks.
                          ┌──────────────────────┐
@@ -131,7 +131,7 @@ The complete FIFO is divided into modular RTL blocks.
     │   sync_r2w.v    │                          │   sync_w2r.v    │
     └─────────────────┘                          └─────────────────┘
 
-✍️ Write Operation
+# ✍️ Write Operation
 
 The write operation takes place in the write clock domain using wr_clk.
 
@@ -168,7 +168,7 @@ Updates the full status.
                        │
                        ▼
                 Update Pointer
-📖 Read Operation
+# 📖 Read Operation
 
 The read operation takes place in the read clock domain using rd_clk.
 
@@ -205,7 +205,7 @@ Updates the empty status.
                        │
                        ▼
                 Update Pointer
-📍 FIFO Memory Organization
+# 📍 FIFO Memory Organization
 
 The FIFO contains 8 memory locations, with each location storing 8 bits.
 
@@ -228,7 +228,7 @@ three address bits are required.
 
 The lower 3 bits of the write and read pointers are used as memory addresses.
 
-🔢 Why are the Pointers 4 Bits?
+# 🔢 Why are the Pointers 4 Bits?
 
 Although the FIFO contains 8 locations and requires only 3 address bits, the write and read pointers are 4 bits wide.
 
@@ -247,7 +247,7 @@ The additional MSB provides wrap-around or cycle information.
 
 This information is used for correct FIFO full and empty detection.
 
-🔢 Binary-to-Gray Code Conversion
+# 🔢 Binary-to-Gray Code Conversion
 
 The write and read pointers are maintained internally as binary counters.
 
@@ -281,7 +281,7 @@ In Gray code, only one bit changes between consecutive values.
 
 Therefore, Gray-coded pointers are suitable for transferring pointer information between asynchronous clock domains.
 
-🔗 Clock Domain Crossing
+# 🔗 Clock Domain Crossing
 
 The FIFO contains two independent clock domains.
 
@@ -326,7 +326,7 @@ Write Clock Domain
 
 The synchronizers are used for pointer information crossing between the two clock domains.
 
-🛡️ 2-Flop Synchronization
+# 🛡️ 2-Flop Synchronization
 
 A two-stage flip-flop synchronizer is used for the Gray-code pointer signals.
 
@@ -351,7 +351,7 @@ The second flip-flop provides the synchronized signal to the destination-domain 
 
 This reduces the probability of metastability propagating into the destination clock domain.
 
-🚦 Full Detection
+# 🚦 Full Detection
 
 The full flag indicates that the FIFO cannot accept another write operation.
 
@@ -374,7 +374,7 @@ full = 1
 
 Further write operations are prevented until space becomes available.
 
-🚫 Empty Detection
+# 🚫 Empty Detection
 
 The empty flag indicates that the FIFO contains no unread data.
 
@@ -395,7 +395,7 @@ empty = 1
 
 Further read operations are prevented until new data becomes available.
 
-🧩 RTL Module Description
+# 🧩 RTL Module Description
 File	Description
 fifo_memory.v	Implements the 8 × 8 FIFO memory
 write_controller.v	Generates write pointer, Gray pointer, address and full flag
@@ -404,7 +404,8 @@ sync_w2r.v	Synchronizes write Gray pointer into the read clock domain
 sync_r2w.v	Synchronizes read Gray pointer into the write clock domain
 async_fifo_top.v	Top-level module connecting all FIFO blocks
 async_fifo_tb.v	Testbench for functional simulation and verification
-📁 Project Structure
+
+# 📁 Project Structure
 Asynchronous-FIFO-Verilog/
 │
 ├── README.md
@@ -420,7 +421,8 @@ Asynchronous-FIFO-Verilog/
 ├── async_fifo_tb.v
 │
 └── async_fifo_waveform.png
-🧪 Verification
+
+# 🧪 Verification
 
 The complete FIFO was functionally verified using a Verilog testbench.
 
@@ -431,7 +433,7 @@ Read Clock Period  = 14 ns
 
 The different clock periods demonstrate that the FIFO operates using independent clock domains.
 
-📥 Test Data
+# 📥 Test Data
 
 The following 8-bit data sequence was written into the FIFO:
 
@@ -445,7 +447,7 @@ The observed output sequence was:
 
 The output sequence matches the input sequence, confirming the expected First-In First-Out behavior.
 
-📊 Waveform Analysis
+# 📊 Waveform Analysis
 
 The simulation waveform was analyzed using GTKWave.
 
@@ -484,11 +486,12 @@ FIFO empty condition
 Binary pointer progression
 Gray-code pointer progression
 Pointer synchronization between clock domains
-📸 Verified Waveform
+
+# 📸 Verified Waveform
 
 The verified simulation waveform is included in this repository.
 
-⚠️ Simulation Note
+# ⚠️ Simulation Note
 
 At the beginning of simulation, data_out may appear as:
 
@@ -502,7 +505,7 @@ After a valid read operation, the expected data sequence appears:
 
 Therefore, the initial xx value does not affect the verified FIFO data sequence.
 
-🔄 Verification Flow
+# 🔄 Verification Flow
                 ┌────────────────┐
                 │   RTL Design   │
                 └───────┬────────┘
@@ -527,13 +530,15 @@ Therefore, the initial xx value does not affect the verified FIFO data sequence.
                         │
                         ▼
                  Waveform Analysis
-💻 Tools and Technologies
+
+# 💻 Tools and Technologies
 Tool / Technology	Purpose
 Verilog HDL	RTL Design
 Icarus Verilog	Compilation and Simulation
 GTKWave	Waveform Visualization and Analysis
 GitHub	Version Control and Project Documentation
-▶️ How to Run the Simulation
+
+# ▶️ How to Run the Simulation
 1. Compile the Design
 
 Open a terminal in the project directory and run:
@@ -564,7 +569,8 @@ wr_gray
 rd_gray
 wr_gray_sync
 rd_gray_sync
-✅ Verification Results
+
+# ✅ Verification Results
 Verification Item	Expected Result	Status
 Reset operation	FIFO initialized correctly	✅ PASS
 Initial FIFO state	empty = 1	✅ PASS
@@ -578,7 +584,8 @@ Empty detection	empty = 1 after all reads	✅ PASS
 Independent clocks	Write and read clocks operate independently	✅ PASS
 Gray-code pointers	Generated correctly	✅ PASS
 Pointer synchronization	2-flop CDC implemented	✅ PASS
-🧠 Key Concepts Demonstrated
+
+# 🧠 Key Concepts Demonstrated
 RTL Design
 Modular Verilog design
 Sequential logic
@@ -604,7 +611,8 @@ Reset testing
 Functional data verification
 VCD waveform generation
 GTKWave waveform analysis
-🎓 Learning Outcomes
+
+# 🎓 Learning Outcomes
 
 Through this project, I gained practical understanding of:
 
@@ -621,7 +629,8 @@ RTL simulation
 Waveform analysis
 Icarus Verilog
 GTKWave
-🚀 Future Enhancements
+
+# 🚀 Future Enhancements
 
 The current design can be further extended with:
 
@@ -637,7 +646,8 @@ Formal verification
 RTL synthesis
 Timing analysis
 FPGA implementation
-💼 Relevance to VLSI / RTL Design
+
+# 💼 Relevance to VLSI / RTL Design
 
 This project provides practical exposure to concepts relevant to:
 
@@ -666,7 +676,8 @@ Testbench Development
 Simulation
       ↓
 Waveform Verification
-⭐ Project Highlights
+
+# ⭐ Project Highlights
 ✅ 8-bit × 8-depth Asynchronous FIFO
 ✅ Independent Write and Read Clock Domains
 ✅ Binary Write and Read Pointers
@@ -678,7 +689,8 @@ Waveform Verification
 ✅ Icarus Verilog Simulation
 ✅ GTKWave Waveform Verification
 ✅ Verified FIFO Data Sequence
-👨‍💻 Author
+
+# 👨‍💻 Author
 Kiran Kumari
 
 B.Tech – Electronics and Communication Engineering
@@ -690,7 +702,8 @@ VLSI
 Design Verification
 FPGA Design
 Embedded Systems
-⭐ Conclusion
+
+# ⭐ Conclusion
 
 This project demonstrates the RTL design and functional verification of an 8-bit × 8-depth Asynchronous FIFO using Verilog HDL.
 
