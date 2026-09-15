@@ -104,10 +104,8 @@ In an asynchronous FIFO, the write and read operations use **different clocks**.
                              │
                        Data Transfer
 
-
-**
-# 🧠 Design Architecture
-**
+------
+## 🧠 Design Architecture
 The complete FIFO is divided into modular RTL blocks.
                          ┌──────────────────────┐
                          │   ASYNC FIFO TOP     │
