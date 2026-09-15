@@ -105,105 +105,34 @@ In an asynchronous FIFO, the write and read operations use **different clocks**.
                        Data Transfer
 
 ---
+
 ## 🧠 Design Architecture
+
 The complete FIFO is divided into modular RTL blocks.
+
+```text
                          ┌──────────────────────┐
-                         │   ASYNC FIFO TOP     │
-                         │  async_fifo_top.v   │
+                         │    ASYNC FIFO TOP    │
+                         │   async_fifo_top.v   │
                          └──────────┬───────────┘
                                     │
              ┌──────────────────────┼──────────────────────┐
              │                      │                      │
              ▼                      ▼                      ▼
     ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-    │ Write Controller│    │  FIFO Memory    │    │ Read Controller │
+    │ Write Controller│    │   FIFO Memory   │    │ Read Controller │
     │                 │    │                 │    │                 │
-    │ wr_bin          │    │    8 × 8 bits   │    │ rd_bin          │
-    │ wr_gray         │    │                 │    │ rd_gray         │
-    │ full            │    │                 │    │ empty           │
+    │    wr_bin       │    │     8 × 8       │    │     rd_bin      │
+    │    wr_gray      │    │     bits        │    │     rd_gray      │
+    │    full         │    │                 │    │     empty        │
     └────────┬────────┘    └─────────────────┘    └────────┬────────┘
              │                                             │
              ▼                                             ▼
     ┌─────────────────┐                          ┌─────────────────┐
     │ Read-to-Write   │                          │ Write-to-Read   │
-    │ Synchronizer    │                          │ Synchronizer    │
+    │  Synchronizer   │                          │  Synchronizer   │
     │   sync_r2w.v    │                          │   sync_w2r.v    │
     └─────────────────┘                          └─────────────────┘
-
-# ✍️ Write Operation
-
-The write operation takes place in the write clock domain using wr_clk.
-
-A write operation is allowed only when:
-
-wr_en = 1
-AND
-full = 0
-
-The write controller:
-
-Checks whether the FIFO is full.
-Generates the write address.
-Stores input data into the FIFO memory.
-Increments the binary write pointer.
-Converts the binary write pointer into Gray code.
-Updates the full status.
-             wr_en
-               │
-               ▼
-        ┌──────────────┐
-        │  FIFO FULL?  │
-        └──────┬───────┘
-               │
-       ┌───────┴───────┐
-       │               │
-    full = 1        full = 0
-       │               │
-       ▼               ▼
-   No Write        Write Data
-                       │
-                       ▼
-                  FIFO Memory
-                       │
-                       ▼
-                Update Pointer
-# 📖 Read Operation
-
-The read operation takes place in the read clock domain using rd_clk.
-
-A read operation is allowed only when:
-
-rd_en = 1
-AND
-empty = 0
-
-The read controller:
-
-Checks whether the FIFO is empty.
-Generates the read address.
-Reads data from the FIFO memory.
-Increments the binary read pointer.
-Converts the binary read pointer into Gray code.
-Updates the empty status.
-             rd_en
-               │
-               ▼
-        ┌──────────────┐
-        │ FIFO EMPTY?  │
-        └──────┬───────┘
-               │
-       ┌───────┴───────┐
-       │               │
-    empty = 1       empty = 0
-       │               │
-       ▼               ▼
-    No Read         Read Data
-                       │
-                       ▼
-                  FIFO Memory
-                       │
-                       ▼
-                Update Pointer
 # 📍 FIFO Memory Organization
 
 The FIFO contains 8 memory locations, with each location storing 8 bits.
